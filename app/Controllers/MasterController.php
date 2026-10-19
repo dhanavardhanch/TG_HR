@@ -21,7 +21,7 @@ class MasterController {
         // Active Departments
         $depts = $pdo->query("SELECT id, department_name AS name, department_code AS code, unit_id 
                               FROM departments 
-                              WHERE is_active = 1 AND (deleted_at IS NULL OR deleted_at = '')
+                              WHERE is_active = 1 AND deleted_at IS NULL
                               ORDER BY department_name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
         // Active Designations with Parent Department
@@ -76,7 +76,7 @@ class MasterController {
                 $sql = "SELECT d.*, 
                                (SELECT COUNT(*) FROM designations des WHERE des.department_id = d.id) AS designation_count
                         FROM departments d 
-                        WHERE (d.deleted_at IS NULL OR d.deleted_at = '')";
+                        WHERE d.deleted_at IS NULL";
                 $params = [];
                 if (!empty($q)) {
                     $sql .= " AND (d.department_name LIKE ? OR d.department_code LIKE ?)";
@@ -167,7 +167,7 @@ class MasterController {
         }
 
         // Return all departments for filtering designations
-        $departments = $pdo->query("SELECT id, department_name FROM departments WHERE (deleted_at IS NULL OR deleted_at = '') ORDER BY department_name ASC")->fetchAll(PDO::FETCH_ASSOC);
+        $departments = $pdo->query("SELECT id, department_name FROM departments WHERE deleted_at IS NULL ORDER BY department_name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
         // Return all active factory units for unit scoping
         $units = $pdo->query("SELECT id, unit_name, unit_code, city, state FROM units WHERE is_active = 1 ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -352,7 +352,7 @@ class MasterController {
         switch ($type) {
             case 'departments':
                 fputcsv($out, ['ID', 'Department Name', 'Department Code', 'Unit ID', 'Status']);
-                $rows = $pdo->query("SELECT id, department_name, department_code, unit_id, is_active FROM departments WHERE (deleted_at IS NULL OR deleted_at = '') ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
+                $rows = $pdo->query("SELECT id, department_name, department_code, unit_id, is_active FROM departments WHERE deleted_at IS NULL ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($rows as $r) {
                     fputcsv($out, [$r['id'], $r['department_name'], $r['department_code'], $r['unit_id'] ?: 'ALL', $r['is_active'] ? 'Active' : 'Inactive']);
                 }
