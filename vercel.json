@@ -1,18 +1,17 @@
 {
-  "version": 2,
   "functions": {
-    "public/index.php": {
+    "api/index.php": {
       "runtime": "vercel-php@0.7.3"
     }
   },
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/public/index.php"
+      "src": "/(images|uploads)/(.*)",
+      "dest": "/public/$1/$2"
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/api/index.php"
     }
   ]
 }
