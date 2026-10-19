@@ -42,9 +42,14 @@ $method = $_SERVER['REQUEST_METHOD'];
 $uri = rtrim($uri, '/');
 if (empty($uri)) $uri = '/';
 
-// Normalize redundant /api prefixes (e.g. if client base URL contains /api and client requests /api/...)
-if (strpos($uri, '/api/api/') === 0) {
-    $uri = substr($uri, 4);
+// API Root / Gateway Health Check
+if ($uri === '/api' || $uri === '/api/health') {
+    jsonSuccess("TrooGood HRMS API Gateway is online and active", [
+        'version' => '2.1.0',
+        'status' => 'operational',
+        'database' => 'connected',
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
 }
 
 // -----------------------------------------------------------------------------
